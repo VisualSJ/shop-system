@@ -29,7 +29,7 @@ class Select {
                 command += ` ${where}`;
             });
         }
-        return command;
+        return command + ';';
     }
 
 }
@@ -55,7 +55,7 @@ class Create {
             command += ` ${row}`;
         });
         command += ' )';
-        return command;
+        return command + ';';
     }
 
 }

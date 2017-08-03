@@ -25,6 +25,7 @@ exports.connect = function (options) {
                 if (error) {
                     return reject(error);
                 }
+                exports.isConnect = true;
                 resolve();
             });
         } catch (error) {
@@ -51,6 +52,9 @@ exports.execute = function (command) {
     });
 };
 
+/**
+ * 查询语法糖
+ */
 exports.sugar = function () {
     return new Sugar();
 };
