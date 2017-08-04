@@ -31,19 +31,17 @@ class Create {
         this._add = [];
     }
 
-    add (name, type) {
-        this._add.push({
-            name: name,
-            type: type,
-        });
+    add (name, type, rule) {
+        var text = `${name} ${type}`;
+        if (rule) {
+            text += ` ${rule}`;
+        }
+        this._add.push(text);
         return this;
     }
 
     toString () {
-        var values = this._add.map((item) => {
-            return `${item.name} ${item.type}`;
-        });
-        return `CREATE TABLE ${this._table} (${values.join(', ')});`;
+        return `CREATE TABLE ${this._table} (${this._add.join(', ')});`;
     }
 
 }

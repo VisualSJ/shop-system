@@ -1,10 +1,20 @@
 'use strict';
 
+const Events = require('events');
 const MySQL = require('mysql');
 
 const Sugar = require('./sugar');
+const EventManager = new Events.EventEmitter();
 
 var Connection = null;
+
+exports.on = function (...args) {
+    EventManager.on(...args);
+};
+
+exports.once = function (...args) {
+    EventManager.once(...args);
+};
 
 // 是否已经连接
 exports.isConnect = false;
@@ -22,6 +32,7 @@ exports.connect = function (options) {
                 database: options.database,
             });
             Connection.connect((error) => {
+                EventManager.emit('connect', error);
                 if (error) {
                     return reject(error);
                 }
@@ -41,13 +52,10 @@ exports.connect = function (options) {
 exports.execute = function (command) {
     return new Promise((resolve, reject) => {
         Connection.query(command, (error, results, fields) => {
-            console.log(error);
-            console.log(results);
-            console.log(fields);
             if (error) {
                 reject();
             }
-            resolve();
+            resolve(results, fields);
         });
     });
 };
