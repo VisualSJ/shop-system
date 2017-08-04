@@ -53,7 +53,7 @@ exports.execute = function (command) {
     return new Promise((resolve, reject) => {
         Connection.query(command, (error, results, fields) => {
             if (error) {
-                reject();
+                reject(error);
             }
             resolve(results, fields);
         });
