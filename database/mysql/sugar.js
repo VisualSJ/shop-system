@@ -19,17 +19,7 @@ class Select {
     }
 
     toString () {
-        var command = `SELECT ${this._select} FROM ${this._from}`;
-        if (this._where.length > 0) {
-            command += ` WHERE`;
-            this._where.forEach((where, index) => {
-                if (index !== 0) {
-                    command += ` AND`;
-                }
-                command += ` ${where}`;
-            });
-        }
-        return command + ';';
+        return `SELECT ${this._select} FROM ${this._from} WHERE ${this._where.join(' AND ')};`;
     }
 
 }
@@ -38,37 +28,91 @@ class Create {
 
     constructor (table) {
         this._table = table;
-        this._rows = [];
+        this._add = [];
     }
 
-    add (row) {
-        this._rows.push(row);
+    add (name, type) {
+        this._add.push({
+            name: name,
+            type: type,
+        });
         return this;
     }
 
     toString () {
-        var command = `CREATE TABLE ${this._table} (`;
-        this._rows.forEach((row, index) => {
-            if (index !== 0) {
-                command += ',';
-            }
-            command += ` ${row}`;
+        var values = this._add.map((item) => {
+            return `${item.name} ${item.type}`;
         });
-        command += ' )';
-        return command + ';';
+        return `CREATE TABLE ${this._table} (${values.join(', ')});`;
     }
 
 }
 
 class Insert {
 
-    constructor () {}
+    constructor (table) {
+        this._table = table;
+        this._add = [];
+    }
 
+    add (name, value) {
+        this._add.push({
+            name: name,
+            value: value,
+        });
+        return this;
+    }
+
+    toString () {
+        var names = this._add.map((item) => {
+            return item.name;
+        });
+        var values = this._add.map((item) => {
+            return item.value;
+        });
+        return `INSERT INTO ${this._table} (${names.join(', ')}) VALUES (${values.join(', ')});`;
+    }
+
+}
+
+class Delete {
+
+    constructor (table) {
+        this._table = table;
+        this._where = [];
+    }
+
+    where (rule) {
+        this._where.push(rule);
+        return this;
+    }
+
+    toString () {
+        return `DELETE FROM ${this._table} WHERE ${this._where.join(' AND ')};`;
+    }
 }
 
 class Update {
 
-    constructor () {}
+    constructor (table) {
+        this._table = table;
+        this._set = [];
+        this._where = [];
+    }
+
+    set (name, value) {
+        this._set.push(`${name}=${value}`);
+        return this;
+    }
+
+    where (rule) {
+        this._where.push(rule);
+        return this;
+    }
+
+    toString () {
+        return `UPDATE ${this._table} SET ${this._set.join(', ')} WHERE ${this._where.join(' AND ')};`;
+    }
 
 }
 
@@ -82,14 +126,21 @@ class Sugar {
         return new Create(table);
     }
 
-    insert () {
-        return new Insert();
+    insert (table) {
+        return new Insert(table);
     }
 
-    update () { 
-        return new Update();
+    delete (table) {
+        return new Delete(table);
+    }
+
+    update (table) { 
+        return new Update(table);
     }
 
 }
 
-module.exports = Sugar;
+module.exports = function (type) {
+    if (type == '') {}
+    return new Sugar();
+};

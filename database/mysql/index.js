@@ -55,6 +55,4 @@ exports.execute = function (command) {
 /**
  * 查询语法糖
  */
-exports.sugar = function () {
-    return new Sugar();
-};
+exports.sugar = Sugar;
