@@ -24,7 +24,7 @@ exports.createUserTable = function () {
         var command = MySQL.sugar()
             .create('USER')
             // 唯一 ID
-            .add('uid', 'INT(11)', 'NOT NULL PRIMARY KEY')
+            .add('uid', 'INT(9)', 'NOT NULL PRIMARY KEY')
             // 用户名
             .add('name', 'VARCHAR(20)', 'NOT NULL')
             // 加密后的密码
@@ -35,19 +35,12 @@ exports.createUserTable = function () {
             .add('phone', 'INT(11)')
             // 性别
             .add('sex', 'VARCHAR(10)')
-            // 登录后的 session
-            .add('session', 'VARCHAR(32)')
-            // 登录的 IP 地址
-            .add('session_ip', 'VARCHAR(15)')
-            // 登录 session 的过期时间戳
-            .add('session_expire', 'INT(13)')
             // 创建的时间
-            .add('create_time', 'INT(13)');
+            .add('create_time', 'INT(11)');
 
         MySQL.execute(`SHOW TABLES LIKE '%USER%';`)
             .then((results) => {
                 if (results.length <= 0) {
-                    console.log(123);
                     MySQL.execute(command.toString())
                         .then(() => {
                             resolve();
@@ -72,9 +65,9 @@ exports.createAddressTable = function () {
         var command = MySQL.sugar()
             .create('ADDRESS')
             // 唯一 id
-            .add('aid', 'INT(11)', 'NOT NULL PRIMARY KEY')
+            .add('aid', 'INT(9)', 'NOT NULL PRIMARY KEY')
             // 属于哪个用户
-            .add('uid', 'INT(11)')
+            .add('uid', 'INT(9)')
             // 国家
             .add('country', 'VARCHAR(100)')
             // 省份
@@ -88,7 +81,7 @@ exports.createAddressTable = function () {
             // 详细地址
             .add('other', 'VARCHAR(100)')
             // 创建的时间
-            .add('create_time', 'INT(13)')
+            .add('create_time', 'INT(11)')
 
         MySQL.execute(`SHOW TABLES LIKE 'ADDRESS';`)
             .then((results) => {
