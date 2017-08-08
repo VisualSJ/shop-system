@@ -26,9 +26,9 @@ exports.createUserTable = function () {
             // 唯一 ID
             .add('uid', 'INT(9)', 'NOT NULL PRIMARY KEY')
             // 用户名
-            .add('name', 'VARCHAR(20)', 'NOT NULL')
+            .add('name', 'VARCHAR(32)', 'NOT NULL')
             // 加密后的密码
-            .add('password', 'VARCHAR(20)', 'NOT NULL')
+            .add('password', 'VARCHAR(32)', 'NOT NULL')
             // 电子邮件
             .add('email', 'VARCHAR(100)')
             // 移动电话

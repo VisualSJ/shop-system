@@ -1,0 +1,32 @@
+html
+    head
+        title='TEST'
+        link(rel='stylesheet', href='/style/default.css')
+        link(rel='stylesheet', href='/css/font-awesome.min.css')
+
+    body
+        link(rel='stylesheet', href='/style/components/layout.css')
+        header.layout-header
+            div.logo
+                div.img
+                    i.fa.fa-linode
+
+                div.title
+                    span SHOP
+
+                div.more
+                    i.fa.fa-bars
+            
+            div.search
+                div.input
+                    i.fa.fa-search
+                    input
+
+            div.tools
+        section.layout-content
+            - if (user) {
+                div.layout-slider
+                    block slider
+            - }
+            div.layout-content
+                block content

@@ -2,8 +2,8 @@ extends ./components/layout
 
 block content
     link(rel='stylesheet', href='/style/home.css')
-    form.login(method='post', action='/')
-        div.title LOGIN
+    form.login(method='post', action='/user/register')
+        div.title REGISTER
         div.prop
             div.input
                 
@@ -12,4 +12,4 @@ block content
             div.input
                 input(name='password', type='password')
         div.prop
-            input(type='submit', value='登录')
+            input(type='submit', value='注册')

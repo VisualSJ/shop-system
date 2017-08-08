@@ -1,67 +1,57 @@
 'use strict';
 
-const Database = require('../database');
-const MySQL = Database.MySQL;
+const User = require('./lib/user');
 
-var existsUid = function (uid) {
-    return new Promise((resolve, reject) => {
-        var cammond = MySQL.sugar()
-            .select('*')
-            .from('USER')
-            .where(`uid=${uid}`);
+exports.index = function (request, response) {
+    var session = request.cookies['ss_session'];
+    if (!User.isLoggedIn(session)) {
+        response.redirect('/');
+        return;
+    }
 
-        MySQL.execute(cammond.toString())
-            .then((list) => {
-                resolve(list.length > 0);
-            }).catch(reject);
+    response.render('user', {
+        user: {},
     });
 };
 
-var createUid = function (level) {
-    level = level || 0;
-    return new Promise((resolve, reject) => {
-        function randomNum() {
-            return Math.random() * 10 | 0;
-        };
-        var uid = '';
-        while (uid.length < 8) {
-            uid += randomNum();
-        }
-        existsUid(uid)
-            .then((exists) => {
-                if (exists) {
-                    return createUid(level + 1);
-                }
-                resolve(uid);
-            })
-            .catch(reject);
-    });
-};
+exports.address = function () {};
 
-exports.register = function (info) {
-    var insert = function (uid) {
-        var cammond = MySQL.sugar()
-            .insert('USER')
-            .add('uid', uid)
-            .add('name', `'${info.username}'`)
-            .add('password', `'${info.password}'`)
-            .add('create_time', (new Date() - 0) / 1000);
+exports.warehouse = function () {};
 
-        return MySQL.execute(cammond.toString());
+exports.goods = function () {};
+
+exports.order = function () {};
+
+exports.register = function (request, response) {
+    var username = request.body['username'];
+    var password = request.body['password'];
+
+    var error = function (error) {
+        console.log(error);
+        response.render('user-register', {});
     };
 
-    return createUid()
-        .then(insert);
-};
+    var login = function () {
+        // 注册完了以后自动登录
+        User.login({
+            username: username,
+            password: password,
+        }).then((session) => {
+            response.cookie('ss_session', session, {
+                maxAge: 600000,
+                httpOnly: true,
+                path: '/',
+            });
+            response.redirect('/user');
+        }).catch(error);
+    };
 
-exports.login = function () {
-
-};
-
-exports.logout = function () {
-
-};
-
-exports.update = function () {
-
+    if (username && password) {
+        User.register({
+            username: username,
+            password: password,
+        }).then(login).catch(error);
+        return;
+    }
+    response.render('user-register', {});
 };

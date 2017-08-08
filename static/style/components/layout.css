@@ -1,0 +1,72 @@
+body {
+  display: flex;
+  flex-direction: column;
+}
+.layout-header {
+  display: flex;
+  height: 60px;
+  background: #212121;
+  color: #f5f5f5;
+  border-bottom: 1px solid #353535;
+}
+.layout-header .logo {
+  width: 280px;
+  display: flex;
+  line-height: 60px;
+}
+.layout-header .logo .img .fa-linode {
+  padding: 0 20px;
+  font-size: 34px;
+}
+.layout-header .logo .title {
+  flex: 1;
+}
+.layout-header .logo .more {
+  margin-right: 20px;
+  width: 30px;
+}
+.layout-header .logo .more .fa-bars {
+  font-size: 18px;
+  margin: 13px 0;
+  padding: 8px;
+  line-height: 18px;
+  cursor: pointer;
+}
+.layout-header .logo .fa {
+  line-height: 60px;
+}
+.layout-header .search {
+  padding: 14px;
+}
+.layout-header .search .input {
+  border-radius: 10px;
+  background: #353535;
+  padding: 6px;
+  box-sizing: border-box;
+}
+.layout-header .search .input .fa-search {
+  padding: 2px;
+}
+.layout-header .search .input input {
+  padding: 0 10px;
+  margin: 0;
+  border: none;
+  background: none;
+  line-height: 18px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+  color: #f5f5f5;
+}
+.layout-content {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+.layout-slider {
+  width: 240px;
+  display: flex;
+  position: relative;
+  border-right: 1px solid #e1e1e1;
+  background: #fff;
+}
