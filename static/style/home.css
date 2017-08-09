@@ -26,3 +26,9 @@
   border: none;
   outline: none;
 }
+.login .prop .input input[type=submit],
+.login .prop .input a {
+  padding: 6px 12px;
+  background: #1976d2;
+  border: none;
+}

@@ -15,6 +15,16 @@ body {
         display: flex;
         line-height: 60px;
 
+        a {
+            color: #f5f5f5;
+            text-decoration: none;
+
+            &:hover {
+                color: #f5f5f5;
+                text-decoration: none;
+            }
+        }
+
         .img {
 
             .fa-linode {
@@ -84,8 +94,69 @@ body {
 
 .layout-slider {
     width: 240px;
-    display: flex;
     position: relative;
     border-right: 1px solid #e1e1e1;
     background: #fff;
+    overflow: auto;
+
+    .user {
+        padding: 20px;
+        display: flex;
+
+        .portrait {
+            width: 60px;
+            height: 60px;
+            border-radius: 60px;
+            background: #e1e1e1;
+        }
+
+        .info {
+            margin: 10px 20px;
+            flex: 1;
+            font-size: 14px;
+        }
+    }
+
+    .navigation {
+        box-sizing: border-box;
+
+        .title {
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        nav {
+            margin-bottom: 20px;
+
+            .nav-item {
+                display: inline-block;
+                text-decoration: none;
+                padding: 10px 20px;
+                display: flex;
+                cursor: pointer;
+                color: #333;
+                transition: background 0.4s;
+                font-size: 14px;
+
+                span {
+                    flex: 1;
+                    padding: 0 20px;
+                }
+
+                &:hover, &[active] {
+                    background: #e1e1e1;
+                }
+
+                .fa {
+                    padding: 3px 0;
+                }
+            }
+        }
+    }
+}
+
+.layout-block {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    padding: 15px;
 }

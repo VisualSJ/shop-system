@@ -19,7 +19,7 @@ exports.home = function (request, response) {
             password: password,
         }).then((session) => {
             response.cookie('ss_session', session, {
-                maxAge: 600000,
+                // maxAge: 600000,
                 httpOnly: true,
                 path: '/',
                 // secure: true,
@@ -29,7 +29,7 @@ exports.home = function (request, response) {
             console.log(error);
 
             response.clearCookie('ss_session', '', {
-                maxAge: 600000,
+                // maxAge: 600000,
                 httpOnly: true,
                 path: '/',
                 // secure: true,

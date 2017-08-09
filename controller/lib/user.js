@@ -28,7 +28,7 @@ var existsName = function (name) {
         var cammond = MySQL.sugar()
             .select('*')
             .from('USER')
-            .where(`name=${name}`);
+            .where(`name='${name}'`);
 
         MySQL.execute(cammond.toString())
             .then((list) => {
@@ -169,6 +169,35 @@ exports.logout = function (session) {
 
 exports.isLoggedIn = function (session) {
     return !!Session[session];
+};
+
+/**
+ * 100 服务器错误
+ * 101 用户不存在
+ */
+exports.getUserInfo = function (session) {
+    var cache = Session[session];
+    if (!cache) {
+        return Promise.reject(101);
+    }
+
+    // 生成查询命令
+    var cammond = MySQL.sugar()
+        .select('*')
+        .from('USER')
+        .where(`uid='${cache.uid}'`);
+
+    return MySQL
+        .execute(cammond.toString())
+        .then((list) => {
+            if (list.length === 0) {
+                return Promise.reject(101);
+            } else if (list.length > 1) {
+                return Promise.reject(100);
+            }
+
+            return Promise.resolve(list[0]);
+        });
 };
 
 exports.update = function () {

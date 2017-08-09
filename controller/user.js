@@ -9,18 +9,18 @@ exports.index = function (request, response) {
         return;
     }
 
-    response.render('user', {
-        user: {},
-    });
+    User.getUserInfo(session)
+        .then((info) => {
+            response.render('user', {
+                user: info,
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+            response.redirect('/');
+        });
+
 };
-
-exports.address = function () {};
-
-exports.warehouse = function () {};
-
-exports.goods = function () {};
-
-exports.order = function () {};
 
 exports.register = function (request, response) {
     var username = request.body['username'];
@@ -38,7 +38,7 @@ exports.register = function (request, response) {
             password: password,
         }).then((session) => {
             response.cookie('ss_session', session, {
-                maxAge: 600000,
+                // maxAge: 600000,
                 httpOnly: true,
                 path: '/',
             });

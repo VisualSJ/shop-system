@@ -5,6 +5,8 @@ const Builder = require('../builder');
 Promise.resolve()
     .then(Builder.waitDatabaseServer)
     .then(Builder.createUserTable)
+    .then(Builder.createShopTable)
+    .then(Builder.createUserShopMapTable)
     .then(Builder.createAddressTable)
     .then(() => {
         console.log('创建项目完成');

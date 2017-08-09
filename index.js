@@ -18,9 +18,16 @@ const User = require('./controller/user');
 
 App.get('/user', User.index);
 App.post('/user', User.index);
-
 App.get('/user/register', User.register);
 App.post('/user/register', User.register);
+
+// ADDRESS
+const Address = require('./controller/address');
+
+App.get('/address', Address.index);
+App.post('/address', Address.index);
+App.get('/address/item', Address.item);
+App.post('/address/item', Address.item);
 
 // HOME
 const Controller = require('./controller');

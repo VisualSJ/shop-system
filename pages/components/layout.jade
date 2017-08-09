@@ -9,10 +9,12 @@ html
         header.layout-header
             div.logo
                 div.img
-                    i.fa.fa-linode
+                    a(href='/')
+                        i.fa.fa-linode
 
                 div.title
-                    span SHOP
+                    a(href='/')
+                        span SHOP
 
                 div.more
                     i.fa.fa-bars
@@ -26,7 +28,30 @@ html
         section.layout-content
             - if (user) {
                 div.layout-slider
-                    block slider
+                    div.user
+                        div.portrait
+                        div.info
+                            div.name=user.name
+                        
+
+                    div.navigation
+                        div.title NAVIGATION
+                        nav
+                            a.nav-item(href='/user')
+                                i.fa.fa-bar-chart
+                                span dashboard
+                                i.fa.fa-angle-right
+
+                            a.nav-item(href='/shop')
+                                i.fa.fa-shopping-bag
+                                span shop
+                                i.fa.fa-angle-right
+
+                            a.nav-item(href='/address')
+                                i.fa.fa-address-card-o
+                                span address
+                                i.fa.fa-angle-right
+
             - }
             div.layout-content
                 block content

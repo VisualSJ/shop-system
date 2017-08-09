@@ -1,0 +1,64 @@
+extends ./components/layout
+
+block content
+    link(rel='stylesheet', href='/style/address.css')
+    div.address
+        div.header
+            div.info
+                h1 ADDRESS
+                div.crumbs
+                    i.fa.fa-home
+                    span Home
+                    i.fa.fa-angle-right
+                    span address
+
+        div.layout-block.info
+            div.tabs
+                div(active) ADD
+                div UPDATE
+
+            form(method='post', action='/address/item')
+
+                div.prop
+                    div.img
+                        i.fa.fa-user
+                    div.input
+                        input(name='name')
+
+                div.prop
+                    div.img
+                        i.fa.fa-venus
+                    div.input
+                        input(name='sex')
+
+                div.prop
+                    div.img
+                        i.fa.fa-phone
+                    div.input
+                        input(name='phone')
+
+                div.prop
+                    div.img
+                        i.fa.fa-envelope-open
+                    div.input
+                        input(name='email')
+
+                div.prop
+                    div.img
+                        i.fa.fa-university
+                    div.input
+                        select#province(name='province')
+                        select#city(name='city')
+                        select#county(name='county')
+                div.prop
+                    div.input
+                        input(name='other')
+
+                div
+                    button(type='submit') 提交
+
+    script(src='/scripts/address.js')
+
+
+
+
