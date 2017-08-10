@@ -1,17 +1,4 @@
 'use strict';
 
 const Builder = require('../builder');
-
-Promise.resolve()
-    .then(Builder.waitDatabaseServer)
-    .then(Builder.createUserTable)
-    .then(Builder.createShopTable)
-    .then(Builder.createUserShopMapTable)
-    .then(Builder.createAddressTable)
-    .then(() => {
-        console.log('创建项目完成');
-    })
-    .catch((error) => {
-        console.log('创建项目失败');
-        console.log(error);
-    });
+Builder.start();
