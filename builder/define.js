@@ -13,8 +13,8 @@ exports.USER =  MySQL.sugar().create('USER')
     // 电子邮件
     .add('email', 'VARCHAR(100)')
     // 移动电话
-    .add('phone', 'INT(11)')
-    // 性别
+    .add('phone', 'VARCHAR(11)')
+    // 性别 (0未知，1男，2女)
     .add('sex', 'INT(1)', 'DEFAULT 0')
     // 创建的时间
     .add('create_time', 'INT(11)');
@@ -23,7 +23,7 @@ exports.SHOP = MySQL.sugar().create('SHOP')
     // 唯一 id
     .add('sid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 商店名字
-    .add('name', 'INT(9)')
+    .add('name', 'VARCHAR(9)')
     // 哪个用户创建的
     .add('uid', 'INT(9)')
     // 创建的时间
@@ -77,7 +77,7 @@ exports.CUSTOMER = MySQL.sugar().create('CUSTOMER')
     // 客户性别
     .add('sex', 'INT(1)', 'DEFAULT 0')
     // 客户电话
-    .add('phone', 'VARCHAR(20)')
+    .add('phone', 'VARCHAR(11)')
     // 客户邮箱
     .add('email', 'VARCHAR(200)')
     // 省份

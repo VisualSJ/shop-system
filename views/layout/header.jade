@@ -1,0 +1,16 @@
+.layout-header
+
+    .logo
+        a(href='/')
+            i.fa.fa-paper-plane-o
+        a(href='/')
+            span SHOP
+
+        - if (user) {
+            i.fa.fa-bars
+        - }
+
+    .search
+        input(placeholder='Search')
+
+    .operation

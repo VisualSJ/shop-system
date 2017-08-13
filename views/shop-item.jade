@@ -1,0 +1,38 @@
+extends ./layout/index
+
+block content
+    link(href='/style/shop.css', rel='stylesheet')
+
+    .title
+        .text
+            h1 商店管理
+            .info 添加管理旗下的商店
+
+    .layout-crumbs
+        i.fa.fa-home
+        a(href='/user') 首页
+        i.fa.fa-angle-right
+        a(href='/shop') 商店管理
+        i.fa.fa-angle-right
+        span 商店详情
+
+    .layout-row
+
+        form.layout-item(method='post')
+
+            .title
+                .item(active=(type=='add')) ADD
+                .item(active=(type=='update')) UPDATE
+
+            .ui-prop
+                .ui-input
+                    i.fa.fa-suitcase
+                    input(name='name', value=shop?shop.name:'')
+
+            .ui-prop
+                .ui-button
+                    - if (shop) {
+                        button 更新商店
+                    - } else {
+                        button 新建商店
+                    - }

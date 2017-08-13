@@ -1,0 +1,118 @@
+.ui-prop {
+    flex: 1;
+    display: flex;
+    margin-bottom: 20px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.ui-input {
+    display: flex;
+    height: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #aaa;
+
+    i {
+        line-height: 30px;
+        height: 30px;
+        width: 40px;
+        background: #aaa;
+        text-align: center;
+        color: #fff;
+    }
+
+    input {
+        flex: 1;
+        border: none;
+        background: none;
+        font-size: 16px;
+        outline: none;
+        padding: 0 10px;
+        overflow: hidden;
+    }
+}
+
+.ui-select {
+    display: flex;
+    height: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #aaa;
+
+    i {
+        line-height: 30px;
+        height: 30px;
+        width: 40px;
+        background: #aaa;
+        text-align: center;
+        color: #fff;
+    }
+
+    select {
+        flex: 1;
+        padding: 0 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-size: 16px;
+        border: none;
+        background: none;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        outline: none;
+    }
+}
+
+.ui-button {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #aaa;
+    color: #fff;
+    margin-right: 20px;
+
+    a, button {
+        background: none;
+        border: none;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        outline: none;
+        flex: 1;
+        font-size: 14px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        padding: 0 20px;
+        cursor: pointer;
+        color: #fff;
+    }
+
+    &:last-child {
+        margin-right: 0;
+    }
+}
+
+.ui-table {
+    flex: 1;
+
+    table {
+        width: 100%;
+        font-size: 14px;
+
+        td {
+            padding: 10px 6px;
+        }
+
+        tr {
+            border-bottom: 1px solid #e1e1e1;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+}

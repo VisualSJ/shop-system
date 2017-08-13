@@ -19,7 +19,11 @@ class Select {
     }
 
     toString () {
-        return `SELECT ${this._select} FROM ${this._from} WHERE ${this._where.join(' AND ')};`;
+        var where = '';
+        if (this._where.length > 0) {
+            where = ` WHERE ${this._where.join(' AND ')}`;
+        }
+        return `SELECT ${this._select} FROM ${this._from}${where};`;
     }
 
 }

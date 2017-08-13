@@ -32,12 +32,12 @@ exports.connect = function (options) {
                 database: options.database,
             });
             Connection.connect((error) => {
-                EventManager.emit('connect', error);
                 if (error) {
                     return reject(error);
                 }
                 exports.isConnect = true;
                 resolve();
+                EventManager.emit('connect', error);
             });
         } catch (error) {
             Connection = null;

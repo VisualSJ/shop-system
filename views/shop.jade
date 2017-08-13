@@ -1,0 +1,44 @@
+extends ./layout/index
+
+block content
+    script(src='/scripts/jQuery-3.2.1.js')
+    script(src='/scripts/highcharts.js')
+    link(href='/style/shop.css', rel='stylesheet')
+
+    .title
+        .text
+            h1 商店管理
+            .info 添加管理旗下的商店
+
+    .layout-crumbs
+        i.fa.fa-home
+        a(href='/user') 首页
+        i.fa.fa-angle-right
+        span 商店管理
+
+    .layout-row
+
+        .layout-item
+        
+            .ui-prop
+                .ui-table
+                    table
+                        tr
+                            td 商店
+                            td 商品种类
+                            td 用户数量
+                            td 操作
+
+                        - if (list) {
+                            - each item in list
+                                tr
+                                    td=item.name
+                                    td 67
+                                    td 982
+                                    td 
+                                        a.fa.fa-cog(href=`/shop/item?sid=${item.sid}`)
+                        - }
+
+            .ui-prop
+                .ui-button
+                    a(href='/shop/item') 新增商店

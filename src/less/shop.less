@@ -1,0 +1,61 @@
+.title {
+    display: flex;
+    padding: 0 5px;
+
+    .text {
+        flex: 1;
+
+        h1 {
+            font-size: 26px;
+            line-height: 38px;
+            color: #444;
+        }
+
+        .info {
+            font-size: 14px;
+            line-height: 26px;
+            color: #999;
+            text-indent: 2px;
+        }
+    }
+
+    .button {
+        line-height: 60px;
+    
+        a {
+            font-size: 20px;
+            line-height: 60px;
+        }
+
+        .fa-plus-square-o {
+            transition: color 0.2s;
+
+            &:hover {
+                color: green;
+            }
+        }
+    }
+}
+
+.layout-item {
+
+    .ui-input {
+        width: 300px;
+    }
+
+    .title {
+        display: flex;
+        margin-bottom: 20px;
+
+        .item {
+            line-height: 34px;
+            width: 100px;
+            text-align: center;
+
+            &[active] {
+                margin-bottom: 0;
+                border-bottom: 4px solid #e1e1e1;
+            }
+        }
+    }
+}
