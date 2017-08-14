@@ -7,7 +7,9 @@ const Database = require('../../database');
 const MySQL = Database.MySQL;
 
 const User = require('./lib/user');
+const Shop = require('./lib/shop');
 const Filter = require('./lib/filter');
+const Code = require('./lib/code');
 
 //////////////
 // 声明过滤器 //
@@ -59,9 +61,7 @@ Router.get('/shop/item', (request, response) => {
         type: 'add',
         user: null,
         shop: null,
-        error: {
-            name: false,
-        },
+        error: null,
     };
 
     // 过滤器内已经判断，所以这里必然存在这个属性
@@ -78,30 +78,23 @@ Router.get('/shop/item', (request, response) => {
                 return;
             }
             responseData.type = 'update';
-            let command = MySQL.sugar()
-                .select('*')
-                .from('SHOP')
-                .where(`sid=${sid}`);
-            return MySQL.execute(command.toString());
-        })
-        .then((list) => {
-            if (!sid) {
-                return;
-            }
-            if (!list || !list[0]) {
-                return Promise.reject(310);
-            }
-            responseData.shop = {
-                sid: list[0].sid,
-                name: list[0].name,
-            };  
+            return Shop.getShop(sid)
+                .then((shop) => {
+                    responseData.shop = shop;  
+                });
         })
         .then(() => {
             response.render('shop-item', responseData);
         })
         .catch((error) => {
-            console.error(error);
-            response.redirect('/');
+            if (error in Code) {
+                console.error(error);
+                responseData.error = Code[error];
+                response.redirect('/shop/item', responseData);
+            } else {
+                console.error(error);
+                response.redirect('/shop');
+            }
         });
 });
 
@@ -112,9 +105,7 @@ Router.post('/shop/item', (request, response) => {
         type: 'add',
         user: null,
         shop: null,
-        error: {
-            name: false
-        },
+        error: null,
     };
 
     // 过滤器内已经判断，所以这里必然存在这个属性
@@ -126,54 +117,41 @@ Router.post('/shop/item', (request, response) => {
         .then((user) => {
             responseData.user = user;
         })
-        // 查询 Shop 信息
+        // 更新 Shop 信息
         .then(() => {
             if (!sid) {
                 return;
             }
+            // 查询 Shop 信息
             responseData.type = 'update';
-            let command = MySQL.sugar()
-                .select('*')
-                .from('SHOP')
-                .where(`sid=${sid}`);
-            return MySQL.execute(command.toString());
+            return Shop.update({
+                sid: sid,
+                name: name,
+            });
         })
-        // 更新 Shop 信息
-        .then((list) => {
-            if (!list || !list[0]) {
-                return;
-            }
-            if (name < 6) {
-                responseData.error.name = true;
-                return;
-            }
-            var command = MySQL.sugar()
-                .update('SHOP')
-                .set('name', `'${name}'`)
-                .where(`sid=${sid}`);
-            return MySQL.execute(command.toString());
-        })
+        // 新建商店
         .then(() => {
             if (sid) {
                 return;
             }
-            if (name < 6) {
-                responseData.error.name = true;
-                return;
-            }
-            var command = MySQL.sugar()
-                .insert('SHOP')
-                .add('name', `'${name}'`)
-                .add('uid', responseData.user.uid)
-                .add('create_time', (new Date() - 0) / 1000);
-            return MySQL.execute(command.toString());
+
+            return Shop.register({
+                name: name,
+                uid: responseData.user.uid,
+            });
         })
         .then(() => {
             response.redirect('/shop');
         })
         .catch((error) => {
-            console.error(error);
-            response.redirect('/');
+            if (error in Code) {
+                console.error(error);
+                responseData.error = Code[error];
+                response.redirect('/shop/item');
+            } else {
+                console.error(error);
+                response.redirect('/shop');
+            }
         });
 });
 
