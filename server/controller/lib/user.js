@@ -64,15 +64,16 @@ var login = function (info) {
     return Promise.resolve()
         // 查询用户
         .then(() => {
-            var command = MySQL.sugar().select('uid')
+            var command = MySQL.sugar()
+                .select('*')
                 .from('USER')
                 .where(`name='${info.username}'`);
-            return MySQL.execute(command);
+            return MySQL.execute(command.toString());
         })
         // 比对 user 密码是否正确
         .then((list) => {
-            if (!list || list.length > 1) {
-                return Promise.reject(101);
+            if (!list || list.length <= 0) {
+                return Promise.reject(210);
             }
             var user = list[0];
             var md5 = Crypto.createHash('md5').update(info.password).digest('hex');
@@ -178,7 +179,7 @@ var register = function (info) {
                 .add('sex', info.sex)
                 .add('email', `'${info.email}'`)
                 .add('phone', `'${info.phone}'`)
-                .add('portrait', '')
+                .add('portrait', `''`)
                 .add('verify', 0)
                 .add('level', 0)
                 .add('create_time', ((new Date() - 0) / 1000 | 0));

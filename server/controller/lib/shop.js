@@ -64,10 +64,10 @@ var register = function (info) {
             var command = MySQL.sugar()
                 .select('*')
                 .from('SHOP')
-                .where(`name='${name}'`);
+                .where(`name='${info.name}'`);
             return MySQL.execute(command.toString());
         })
-        .then(() => {
+        .then((list) => {
             if (!list || list.length <= 0) {
                 return Promise.resolve();
             }
@@ -106,10 +106,10 @@ var update = function (info) {
             var command = MySQL.sugar()
                 .select('*')
                 .from('SHOP')
-                .where(`name='${name}'`);
+                .where(`name='${info.name}'`);
             return MySQL.execute(command.toString());
         })
-        then((list) => {
+        .then((list) => {
             if (!list || list.length <= 0) {
                 return Promise.resolve();
             }
