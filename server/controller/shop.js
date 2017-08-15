@@ -78,7 +78,7 @@ Router.get('/shop/item', (request, response) => {
                 return;
             }
             responseData.type = 'update';
-            return Shop.getShop(sid)
+            return Shop.get(sid)
                 .then((shop) => {
                     responseData.shop = shop;  
                 });

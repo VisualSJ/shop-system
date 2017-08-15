@@ -6,6 +6,7 @@ class Select {
         this._select = select;
         this._from = '';
         this._where = [];
+        this._limit = null;
     }
 
     from (table) {
@@ -18,12 +19,20 @@ class Select {
         return this;
     }
 
+    limit (start, end) {
+        this._limit = [start, end];
+    }
+
     toString () {
         var where = '';
         if (this._where.length > 0) {
             where = ` WHERE ${this._where.join(' AND ')}`;
         }
-        return `SELECT ${this._select} FROM ${this._from}${where};`;
+        var limit = '';
+        if (this._limit) {
+            limit = ` LIMIT ${this._limit[0]}, ${this._limit[1]}`
+        }
+        return `SELECT ${this._select} FROM ${this._from}${where}${limit};`;
     }
 
 }

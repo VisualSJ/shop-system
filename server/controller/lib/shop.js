@@ -3,99 +3,134 @@
 const Database = require('../../../database');
 const MySQL = Database.MySQL;
 
-exports.getShop = function (sid) {
-    if (!MySQL.isConnect) {
-        return Promise.reject(101);
-    }
-    return new Promise((resolve, reject) => {
-        var command = MySQL.sugar()
-            .select('*')
-            .from('SHOP')
-            .where(`sid=${sid}`);
-
-        MySQL.execute(command.toString())
-            .then((list) => {
-                if (!list || list.length <= 0) {
-                    reject(310);
-                }
-                resolve(list[0]);
-            });
-    });
-};
-
-exports.register = function (info) {
+/**
+ * 传入 sid 查找对应的商店信息
+ * @param {*} sid 
+ */
+var get = function (sid) {
     if (!MySQL.isConnect) {
         return Promise.reject(101);
     }
 
-    var checkName = function (name) {
-        var command = MySQL.sugar()
-            .select('*')
-            .from('SHOP')
-            .where(`name='${name}'`)
-        return new Promise((resolve, reject) => {
-            MySQL.execute(command.toString())
-                .then((list) => {
-                    if (!list || list.length <= 0) {
-                        resolve();
-                    }
-                    reject(301);
-                });
+    return Promise.resolve()
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('SHOP')
+                .where(`sid=${sid}`);
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            if (!list || list.length <= 0) {
+                return Promise.reject(310);
+            }
+            return Promise.resolve(list[0]);
         });
-    };
-
-    var register = function () {
-        if (!info.name || info.name.length < 2) {
-            return Promise.reject(302);
-        }
-        if (!info.uid) {
-            return Promise.reject(303);
-        }
-        var command = MySQL.sugar()
-            .insert('SHOP')
-            .add('name', `'${info.name}'`)
-            .add('uid', `uid='${info.uid}'`)
-            .add('create_time', (new Date() - 0) / 1000);
-        return MySQL.execute(command.toString());
-    };
-
-    return checkName(info.name).then(register);
 };
 
-exports.update = function (info) {
+/**
+ * 获取一个列表
+ * @param {*} page 页码 
+ * @param {*} count 每页数量
+ */
+var getList = function (page, count) {
     if (!MySQL.isConnect) {
         return Promise.reject(101);
     }
 
-    var checkName = function (name) {
-        var command = MySQL.sugar()
-            .select('*')
-            .from('SHOP')
-            .where(`name='${name}'`)
-        return new Promise((resolve, reject) => {
-            MySQL.execute(command.toString())
-                .then((list) => {
-                    if (!list || list.length <= 0) {
-                        resolve();
-                    }
-                    reject(301);
-                });
+    return Promise.resolve()
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('SHOP')
+                .limit((page - 0)*count, count);
+            return MySQL.execute(command.toString());
         });
-    };
-
-    var update = function () {
-        if (!info.name || info.name.length < 2) {
-            return Promise.reject(302);
-        }
-        if (!info.sid) {
-            return Promise.reject(310);
-        }
-        var command = MySQL.sugar()
-            .update('SHOP')
-            .set('name', `'${info.name}'`)
-            .where(`sid=${info.sid}`);
-        return MySQL.execute(command.toString());
-    };
-
-    return checkName(info.name).then(update);
 };
+
+/**
+ * 注册商店
+ * info {
+ *   name
+ * }
+ */
+var register = function (info) {
+    if (!MySQL.isConnect) {
+        return Promise.reject(101);
+    }
+
+    return Promise.resolve()
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('SHOP')
+                .where(`name='${name}'`);
+            return MySQL.execute(command.toString());
+        })
+        .then(() => {
+            if (!list || list.length <= 0) {
+                return Promise.resolve();
+            }
+            return Promise.reject(301);
+        })
+        .then(() => {
+            if (!info.name || info.name.length < 2) {
+                return Promise.reject(302);
+            }
+            if (!info.uid) {
+                return Promise.reject(303);
+            }
+            var command = MySQL.sugar()
+                .insert('SHOP')
+                .add('name', `'${info.name}'`)
+                .add('uid', `uid='${info.uid}'`)
+                .add('create_time', (new Date() - 0) / 1000);
+            return MySQL.execute(command.toString());
+        });
+};
+
+/**
+ * 更新商店信息
+ * 
+ * info {
+ *   name
+ * }
+ */
+var update = function (info) {
+    if (!MySQL.isConnect) {
+        return Promise.reject(101);
+    }
+
+    return Promise.resolve()
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('SHOP')
+                .where(`name='${name}'`);
+            return MySQL.execute(command.toString());
+        })
+        then((list) => {
+            if (!list || list.length <= 0) {
+                return Promise.resolve();
+            }
+            return Promise.reject(301);
+        })
+        .then(() => {
+            if (!info.name || info.name.length < 2) {
+                return Promise.reject(302);
+            }
+            if (!info.sid) {
+                return Promise.reject(310);
+            }
+            var command = MySQL.sugar()
+                .update('SHOP')
+                .set('name', `'${info.name}'`)
+                .where(`sid=${info.sid}`);
+            return MySQL.execute(command.toString());
+        });
+};
+
+exports.get = get;
+exports.register = register;
+exports.update = update;
+exports.getList = getList;
