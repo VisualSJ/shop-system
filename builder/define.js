@@ -14,6 +14,12 @@ exports.USER =  MySQL.sugar().create('USER')
     .add('email', 'VARCHAR(100)')
     // 移动电话
     .add('phone', 'VARCHAR(11)')
+    // 头像地址
+    .add('portrait', 'VARCHAR(40)')
+    // 是否通过验证 (0 未验证, 1 已验证, 2 验证失效)
+    .add('verify', 'INT(1)')
+    // 用户权限等级 (0 普通, 1-80 VIP, 90-99 管理员)
+    .add('level', 'INT(2)')
     // 性别 (0未知，1男，2女)
     .add('sex', 'INT(1)', 'DEFAULT 0')
     // 创建的时间
