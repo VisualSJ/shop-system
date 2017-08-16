@@ -21,6 +21,7 @@ class Select {
 
     limit (start, end) {
         this._limit = [start, end];
+        return this;
     }
 
     toString () {
