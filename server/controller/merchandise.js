@@ -12,12 +12,12 @@ const Filter = require('./lib/filter');
 //////////////
 // 声明过滤器 //
 //////////////
-Router.get('/merchandise', Filter.guest);
+Router.get('/', Filter.guest);
 
 /////////////////
 // 定义具体的接口 //
 /////////////////
-Router.get('/merchandise', (request, response) => {
+Router.get('/', (request, response) => {
 
     var responseData = {
         user: null,

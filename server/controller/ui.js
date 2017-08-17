@@ -3,7 +3,7 @@
 const Express = require('express');
 const Router = Express();
 
-Router.get('/ui', (request, response) => {
+Router.get('/', (request, response) => {
     response.render('ui');
 });
 

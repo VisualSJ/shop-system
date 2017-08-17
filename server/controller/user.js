@@ -9,13 +9,13 @@ const User = require('./lib/user');
 //////////////
 // 声明过滤器 //
 //////////////
-Router.get('/user', Filter.guest);
-Router.get('/user/login', Filter.user);
+Router.get('/', Filter.guest);
+Router.get('/login', Filter.user);
 
 /////////////////
 // 定义具体的接口 //
 /////////////////
-Router.get('/user', (request, response) => {
+Router.get('/', (request, response) => {
     // User 主要信息展示区域
     // 这里主要展示各种的数据统计信息
     
@@ -34,12 +34,12 @@ Router.get('/user', (request, response) => {
         });
 });
 
-Router.get('/user/login', (request, response) => {
+Router.get('/login', (request, response) => {
     // 登录界面
     response.render('user-login');
 });
 
-Router.post('/user/login', (request, response, next) => {
+Router.post('/login', (request, response, next) => {
     // 登录提交数据接口
     // 收到数据后对比，并跳转到指定页面
     // 如果登录失败，则重新显示登录页面，并返回错误
@@ -72,12 +72,12 @@ Router.post('/user/login', (request, response, next) => {
     });
 });
 
-Router.get('/user/register', (request, response) => {
+Router.get('/register', (request, response) => {
     // 注册页面
     response.render('user-register');
 });
 
-Router.post('/user/register', (request, response) => {
+Router.post('/register', (request, response) => {
     // 注册提交数据接口
     // 收到数据后判断数据正确性，然后插入数据库
     // 并跳转指定页面
@@ -129,7 +129,7 @@ Router.post('/user/register', (request, response) => {
     });
 });
 
-Router.get('/user/logout', (request, response) => {
+Router.get('/logout', (request, response) => {
     // 退出登录
     User.logout(request.cookies.ss_session)
         .then(() => {

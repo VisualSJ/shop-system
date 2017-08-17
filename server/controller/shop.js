@@ -9,18 +9,18 @@ const MySQL = Database.MySQL;
 const User = require('./lib/user');
 const Shop = require('./lib/shop');
 const Filter = require('./lib/filter');
-const Code = require('./lib/code');
+const Message = require('./lib/message');
 
 //////////////
 // 声明过滤器 //
 //////////////
-Router.get('/shop', Filter.guest);
-Router.get('/shop/item', Filter.guest);
+Router.get('/', Filter.guest);
+Router.get('/item', Filter.guest);
 
 /////////////////
 // 定义具体的接口 //
 /////////////////
-Router.get('/shop', (request, response) => {
+Router.get('/', (request, response) => {
     // Shop 主要信息展示区域
     // 这里主要展示 Shop 的数据统计信息
 
@@ -54,7 +54,7 @@ Router.get('/shop', (request, response) => {
         });
 });
 
-Router.get('/shop/item', (request, response) => {
+Router.get('/item', (request, response) => {
     // 显示 Shop 信息或者是新建 Shop 的页面
 
     var responseData = {
@@ -87,9 +87,9 @@ Router.get('/shop/item', (request, response) => {
             response.render('shop-item', responseData);
         })
         .catch((error) => {
-            if (error in Code) {
+            if (error in Message) {
                 console.error(error);
-                responseData.error = Code[error];
+                responseData.error = Message[error];
                 response.redirect('/shop/item', responseData);
             } else {
                 console.error(error);
@@ -98,7 +98,7 @@ Router.get('/shop/item', (request, response) => {
         });
 });
 
-Router.post('/shop/item', (request, response) => {
+Router.post('/item', (request, response) => {
     // 新建 Shop 或者是更新 Shop 的接口
 
     var responseData = {
@@ -144,9 +144,9 @@ Router.post('/shop/item', (request, response) => {
             response.redirect('/shop');
         })
         .catch((error) => {
-            if (error in Code) {
+            if (error in Message) {
                 console.error(error);
-                responseData.error = Code[error];
+                responseData.error = Message[error];
                 response.redirect('/shop/item');
             } else {
                 console.error(error);

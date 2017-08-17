@@ -4,7 +4,7 @@ const Crypto = require('crypto');
 
 const Database = require('../../../database');
 const MySQL = Database.MySQL;
-const Code = require('./code');
+const Message = require('./message');
 
 /**
  * cache {

@@ -83,7 +83,7 @@ var register = function (info) {
             var command = MySQL.sugar()
                 .insert('SHOP')
                 .add('name', `'${info.name}'`)
-                .add('uid', `uid='${info.uid}'`)
+                .add('uid', `${info.uid}`)
                 .add('create_time', (new Date() - 0) / 1000);
             return MySQL.execute(command.toString());
         });
