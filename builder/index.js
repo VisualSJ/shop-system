@@ -44,7 +44,7 @@ exports.start = function () {
     .then(createTable('WAREHOUSE'))
     .then(createTable('MERCHANDISE'))
     .then(createTable('CUSTOMER'))
-    .then(createTable('CUSTOMER_ORDER'))
+    .then(createTable('ORDER'))
     .then(() => {
         console.log('构建项目数据库成功');
         process.exit(0);

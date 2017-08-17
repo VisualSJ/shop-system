@@ -33,7 +33,7 @@ class Select {
         if (this._limit) {
             limit = ` LIMIT ${this._limit[0]}, ${this._limit[1]}`
         }
-        return `SELECT ${this._select} FROM ${this._from}${where}${limit};`;
+        return `SELECT ${this._select} FROM \`${this._from}\`${where}${limit};`;
     }
 
 }
@@ -55,7 +55,7 @@ class Create {
     }
 
     toString () {
-        return `CREATE TABLE ${this._table} (${this._add.join(', ')});`;
+        return `CREATE TABLE \`${this._table}\` (${this._add.join(', ')});`;
     }
 
 }
@@ -82,7 +82,7 @@ class Insert {
         var values = this._add.map((item) => {
             return item.value;
         });
-        return `INSERT INTO ${this._table} (${names.join(', ')}) VALUES (${values.join(', ')});`;
+        return `INSERT INTO \`${this._table}\` (${names.join(', ')}) VALUES (${values.join(', ')});`;
     }
 
 }
@@ -100,7 +100,7 @@ class Delete {
     }
 
     toString () {
-        return `DELETE FROM ${this._table} WHERE ${this._where.join(' AND ')};`;
+        return `DELETE FROM \`${this._table}\` WHERE ${this._where.join(' AND ')};`;
     }
 }
 
@@ -123,7 +123,7 @@ class Update {
     }
 
     toString () {
-        return `UPDATE ${this._table} SET ${this._set.join(', ')} WHERE ${this._where.join(' AND ')};`;
+        return `UPDATE \`${this._table}\` SET ${this._set.join(', ')} WHERE ${this._where.join(' AND ')};`;
     }
 
 }

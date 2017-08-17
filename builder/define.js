@@ -36,11 +36,11 @@ exports.SHOP = MySQL.sugar().create('SHOP')
     .add('create_time', 'INT(11)');
 
 exports.USER_SHOP_MAP = MySQL.sugar().create('USER_SHOP_MAP')
-    // 商店 sid
-    .add('sid', 'INT(9)', 'NOT NULL PRIMARY KEY')
-    // 用户 uid
+    // 商店 sid (一个商店可以有多个用户管理)
+    .add('sid', 'INT(9)')
+    // 用户 uid (一个用户也可以管理多个商店)
     .add('uid', 'INT(9)')
-    // 创建的时间
+    // 关联创建的时间
     .add('create_time', 'INT(11)');
 
 exports.WAREHOUSE = MySQL.sugar().create('WAREHOUSE')
@@ -50,6 +50,8 @@ exports.WAREHOUSE = MySQL.sugar().create('WAREHOUSE')
     .add('sid', 'INT(9)')
     // 仓库名字
     .add('name', 'VARCHAR(20)')
+    // 仓库备注
+    .add('remark', 'VARCHAR(500)')
     // 哪个用户创建的
     .add('uid', 'INT(9)')
     // 创建的时间
@@ -64,10 +66,10 @@ exports.MERCHANDISE = MySQL.sugar().create('MERCHANDISE')
     .add('name', 'VARCHAR(20)')
     // 成本价格
     .add('cost_price', 'INT(7)')
-    // 批发售价
-    .add('wholesale_price', 'INT(7)')
     // 零售售价
     .add('retail_price', 'INT(7)')
+    // 批发售价
+    .add('wholesale_price', 'INT(7)')
     // 哪个用户创建的
     .add('uid', 'INT(9)')
     // 创建的时间
@@ -99,19 +101,23 @@ exports.CUSTOMER = MySQL.sugar().create('CUSTOMER')
     // 创建的时间
     .add('create_time', 'INT(11)');
 
-exports.CUSTOMER_ORDER = MySQL.sugar().create('CUSTOMER_ORDER')
+exports.ORDER = MySQL.sugar().create('ORDER')
     // 唯一 id
     .add('oid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 属于哪个商店
     .add('sid', 'INT(9)')
     // 包含商品
     .add('goods', 'VARCHAR(200)')
-    // 订单总价
-    .add('price', 'INT(7)')
-    // 订单状态(下单 1 -> 发货 2 -> 签收 3 -> 完成 4 OR 取消 0)
-    // .add('state', 'INT(1)')
+    // 建议零售价
+    .add('suggested_retail_price', 'INT(7)')
+    // 建议批发价
+    .add('suggested_wholesale_price')
+    // 订单实际总价
+    .add('actual_price', 'INT(7)')
     // 备注(降价抹零送赠品等备注信息)
     .add('remark', 'VARCHAR(500)')
+    // 订单状态(下单 1 -> 发货 2 -> 签收 3 -> 完成 4 OR 取消 0)
+    .add('state', 'INT(1)')
     // 哪个用户创建的
     .add('uid', 'INT(9)')
     // 创建的时间
