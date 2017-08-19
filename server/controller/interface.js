@@ -25,9 +25,22 @@ const ERROR_HANDLER = function (response) {
     };
 }
 
-Router.get('/', (request, response) => {
-    response.end('123');
-});
+const CHECK_USER = function (session) {
+    return Promise.resolve()
+        // 用户登录状态
+        .then(() => {
+            var isLoggedIn = User.isLoggedIn(session);
+            if (isLoggedIn) {
+                return Promise.resolve();
+            } else {
+                return Promise.reject(102);
+            }
+        })
+        // 获取用户信息
+        .then(() => {
+            return User.getUser(session);
+        });
+};
 
 //////////
 // SHOP //
@@ -42,28 +55,17 @@ Router.all('/shop/add', (request, response) => {
     var name = request.body.name || request.query.name;
 
     var user, sid;
-    Promise.resolve()
+    CHECK_USER(request.cookies.ss_session)
+        .then((data) => {
+            user = data;
+        })
+        // 校验参数
         .then(() => {
-            if (!name) {
+            sid -= 0;
+            if (!sid || isNaN(sid)) {
                 return Promise.reject(401);
             }
             return Promise.resolve();
-        })
-        // 用户登录状态
-        .then(() => {
-            var isLoggedIn = User.isLoggedIn(request.cookies.ss_session);
-            if (isLoggedIn) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject(102);
-            }
-        })
-        // 获取用户信息
-        .then(() => {
-            return User.getUser(request.cookies.ss_session);
-        })
-        .then((data) => {
-            user = data;
         })
         // 检查是否超出用户允许新建的商店数量
         .then(() => {
@@ -132,20 +134,7 @@ Router.all('/shop/list', (request, response) => {
     }
     
     var user;
-    Promise.resolve()
-        // 用户登录状态
-        .then(() => {
-            var isLoggedIn = User.isLoggedIn(request.cookies.ss_session);
-            if (isLoggedIn) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject(102);
-            }
-        })
-        // 获取用户信息
-        .then(() => {
-            return User.getUser(request.cookies.ss_session);
-        })
+    CHECK_USER(request.cookies.ss_session)
         .then((data) => {
             user = data;
         })
@@ -201,7 +190,11 @@ Router.all('/shop/item', (request, response) => {
 
     var sid = request.body.sid || request.query.sid;
     var user;
-    return Promise.resolve()
+    
+    CHECK_USER(request.cookies.ss_session)
+        .then((data) => {
+            user = data;
+        })
         .then(() => {
             sid -= 0;
             if (!sid || isNaN(sid)) {
@@ -209,21 +202,20 @@ Router.all('/shop/item', (request, response) => {
             }
             return Promise.resolve();
         })
-        // 用户登录状态
+        // 检查是否允许当前用户访问该 sid 商店
         .then(() => {
-            var isLoggedIn = User.isLoggedIn(request.cookies.ss_session);
-            if (isLoggedIn) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject(102);
+            var command = MySQL.sugar()
+                .select('*')
+                .from('USER_SHOP_MAP')
+                .where(`sid=${sid}`)
+                .where(`uid=${user.uid}`);
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            if (!list || list.length <= 0) {
+                return Promise.reject(412);
             }
-        })
-        // 获取用户信息
-        .then(() => {
-            return User.getUser(request.cookies.ss_session);
-        })
-        .then((data) => {
-            user = data;
+            return Promise.resolve();
         })
         // 根据 sid 查询商店信息
         .then((list) => {
@@ -274,36 +266,24 @@ Router.all('/shop/item', (request, response) => {
 
 /**
  * 添加管理员
- * /shop/add-admin?sid=1&uid=2
+ * /interface/shop/add-admin?sid=1&uid=2
  */
 Router.all('/shop/add-admin', (request, response) => {
     var sid = request.query.sid;
     var uid = request.query.uid;
 
     var user;
-    return Promise.resolve()
+    CHECK_USER(request.cookies.ss_session)
+        .then((data) => {
+            user = data;
+        })
+        // 检查参数
         .then(() => {
             sid -= 0;
             if (!sid || isNaN(sid)) {
                 return Promise.reject(401);
             }
             return Promise.resolve();
-        })
-        // 用户登录状态
-        .then(() => {
-            var isLoggedIn = User.isLoggedIn(request.cookies.ss_session);
-            if (isLoggedIn) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject(102);
-            }
-        })
-        // 获取用户信息
-        .then(() => {
-            return User.getUser(request.cookies.ss_session);
-        })
-        .then((data) => {
-            user = data;
         })
         // 根据 sid 查询商店信息
         .then((list) => {
@@ -318,8 +298,28 @@ Router.all('/shop/add-admin', (request, response) => {
             if (!list || !list[0]) {
                 return Promise.reject(410);
             }
-            if (list[0].uid != user.uid) {
+            var item = list[0];
+            if (item.uid != user.uid) {
                 return Promise.reject(411);
+            }
+            if (item.uid == uid) {
+                return Promise.reject(413);
+            }
+            return Promise.resolve();
+        })
+        // 检查是否已经是管理员
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('USER_SHOP_MAP')
+                .where(`uid=${uid}`)
+                .where(`sid=${sid}`);
+            
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            if (list.length > 0) {
+                return Promise.reject(413);
             }
             return Promise.resolve();
         })
@@ -346,36 +346,24 @@ Router.all('/shop/add-admin', (request, response) => {
 
 /**
  * 移除管理员
- * /shop/remove-admin?sid=1&uid=2
+ * /interface/shop/remove-admin?sid=1&uid=2
  */
 Router.all('/shop/remove-admin', (request, response) => {
     var sid = request.query.sid;
     var uid = request.query.uid;
 
     var user;
-    return Promise.resolve()
+    CHECK_USER(request.cookies.ss_session)
+        .then((data) => {
+            user = data;
+        })
+        // 检查数据
         .then(() => {
             sid -= 0;
             if (!sid || isNaN(sid)) {
                 return Promise.reject(401);
             }
             return Promise.resolve();
-        })
-        // 用户登录状态
-        .then(() => {
-            var isLoggedIn = User.isLoggedIn(request.cookies.ss_session);
-            if (isLoggedIn) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject(102);
-            }
-        })
-        // 获取用户信息
-        .then(() => {
-            return User.getUser(request.cookies.ss_session);
-        })
-        .then((data) => {
-            user = data;
         })
         // 根据 sid 查询商店信息
         .then((list) => {
@@ -390,8 +378,12 @@ Router.all('/shop/remove-admin', (request, response) => {
             if (!list || !list[0]) {
                 return Promise.reject(410);
             }
-            if (list[0].uid != user.uid) {
+            var item = list[0];
+            if (item.uid != user.uid) {
                 return Promise.reject(411);
+            }
+            if (item.uid == uid) {
+                return Promise.reject(414);
             }
             return Promise.resolve();
         })
@@ -412,6 +404,31 @@ Router.all('/shop/remove-admin', (request, response) => {
             });
         })
         .catch(ERROR_HANDLER(response));
+});
+
+///////////////
+// WAREHOUSE //
+///////////////
+
+Router.all('/warehouse/add', (request, response) => {
+    var sid = request.query.sid || request.body.sid;
+    var name = request.query.name || request.body.name;
+    var remark = request.query.remark || request.body.remark;
+
+    var user;
+    CHECK_USER(request.cookies.ss_session)
+        .then((data) => {
+            user = data;
+        })
+        .then(() => {
+            sid -= 0;
+            if (!sid || isNaN(sid)) {
+                return Promise.reject(401);
+            }
+            return Promise.resolve();
+        })
+        .catch(ERROR_HANDLER(response));
+
 });
 
 module.exports = Router;
