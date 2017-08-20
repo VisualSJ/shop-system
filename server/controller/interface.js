@@ -420,12 +420,94 @@ Router.all('/warehouse/add', (request, response) => {
         .then((data) => {
             user = data;
         })
+        // 检查数据
         .then(() => {
             sid -= 0;
             if (!sid || isNaN(sid)) {
                 return Promise.reject(401);
             }
+            if (!name) {
+                return Promise.reject(401);
+            }
             return Promise.resolve();
+        })
+        // 检查 sid 商店是否允许该用户修改
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('SHOP')
+                .where(`uid=${user.uid}`)
+                .where(`sid=${sid}`);
+
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            if (!list || list.length <= 0) {
+                return Promise.reject(412);
+            }
+            return Promise.resolve();
+        })
+        // 检查商店是否超出仓库限制
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('wid')
+                .from('WAREHOUSE')
+                .where(`sid=${sid}`);
+            
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            if (list.length >= 2) {
+                return Promise.reject(415);
+            }
+            return Promise.resolve();
+        })
+        // 检查用户是否超出仓库限制
+        .then(() => {
+            var command = MySQL.sugar()
+                .select('wid')
+                .from('WAREHOUSE')
+                .where(`uid=${user.uid}`);
+            
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            if (list.length >= 4) {
+                return Promise.reject(416);
+            }
+            return Promise.resolve();
+        })
+        // 插入仓库信息
+        .then(() => {
+            var command = MySQL.sugar()
+                .insert('WAREHOUSE')
+                .add('sid', sid)
+                .add('name', `'${name}'`)
+                .add('remark', `'${remark || ''}'`)
+                .add('uid', user.uid)
+                .add('create_time', Math.floor((new Date() - 0) / 1000));
+
+            return MySQL.execute(command.toString());
+        })
+        // 查询插入的信息
+        .then((data) => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('WAREHOUSE')
+                .where(`wid=${data.insertId}`);
+
+            return MySQL.execute(command.toString());
+        })
+        .then((list) => {
+            return Promise.resolve(list[0]);
+        })
+        // 返回成功信息
+        .then((data) => {
+            response.jsonp({
+                code: 400,
+                message: Message[400],
+                data: data,
+            });
         })
         .catch(ERROR_HANDLER(response));
 
