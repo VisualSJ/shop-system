@@ -6,8 +6,8 @@ const Router = Express();
 const Database = require('../../database');
 const MySQL = Database.MySQL;
 
-const User = require('./lib/user');
-const Filter = require('./lib/filter');
+const User = require('../utils/user');
+const Filter = require('../utils/filter');
 
 //////////////
 // 声明过滤器 //

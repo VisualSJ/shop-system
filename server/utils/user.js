@@ -2,7 +2,7 @@
 
 const Crypto = require('crypto');
 
-const Database = require('../../../database');
+const Database = require('../../database');
 const MySQL = Database.MySQL;
 const Message = require('./message');
 

@@ -6,9 +6,9 @@ const Router = Express();
 const Database = require('../../database');
 const MySQL = Database.MySQL;
 
-const Message = require('./lib/message');
-const User = require('./lib/user');
-const Shop = require('./lib/shop');
+const Message = require('../utils/message');
+const User = require('../utils/user');
+const Shop = require('../utils/shop');
 
 const ERROR_HANDLER = function (response) {
     return function (code) {

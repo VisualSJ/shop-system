@@ -3,8 +3,8 @@
 const Express = require('express');
 const Router = Express();
 
-const Filter = require('./lib/filter');
-const User = require('./lib/user');
+const Filter = require('../utils/filter');
+const User = require('../utils/user');
 
 //////////////
 // 声明过滤器 //

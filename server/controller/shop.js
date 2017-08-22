@@ -6,10 +6,10 @@ const Router = Express();
 const Database = require('../../database');
 const MySQL = Database.MySQL;
 
-const User = require('./lib/user');
-const Shop = require('./lib/shop');
-const Filter = require('./lib/filter');
-const Message = require('./lib/message');
+const User = require('../utils/user');
+const Shop = require('../utils/shop');
+const Filter = require('../utils/filter');
+const Message = require('../utils/message');
 
 //////////////
 // 声明过滤器 //

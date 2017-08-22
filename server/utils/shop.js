@@ -1,6 +1,6 @@
 'use strict';
 
-const Database = require('../../../database');
+const Database = require('../../database');
 const MySQL = Database.MySQL;
 
 /**
