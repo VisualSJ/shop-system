@@ -14,7 +14,12 @@ const Message = require('./message');
  *   }
  * }
  */
-const Cache = {};
+const Cache = {
+    k68Pw2asBt4CsfTXbOhHQTh0aUK62Keu: {
+        uid: 1,
+        expire_timestamp: new Date('2019/01/01')
+    }
+};
 const SESSION_STRING = new String('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
 const EXPIRE_TIME = 86400 * 7; // 单位秒，时间戳 / 1000
 

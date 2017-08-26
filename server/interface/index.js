@@ -5,134 +5,47 @@ const Router = Express();
 
 const User = require('./lib/user');
 const Shop = require('./lib/shop');
+const Utils = require('./lib/utils');
 
 Router.all('/shop/add', (request, response) => {
-    Promise.resolve({})
-        .then(User.isLoggedIn(request, response))
-        .then(Shop.duplicationName(request, response))
-        .then(Shop.userLimit(request, response))
-        .then(Shop.insert(request, response))
-        .catch();
+    Promise.resolve({
+        user: null,
+        shop: null,
+    })
+    .then(User.isLoggedIn(request))
+    .then(Shop.duplicationName(request))
+    .then(Shop.userLimit(request))
+    .then(Shop.insert(request))
+    .then(Shop.attachShopMap(request))
+    .then(Utils.successJson(response, (data) => {
+        return {
+            sid: data.sid,
+            name: data.name,
+        };
+    }))
+    .catch(Utils.errorJson(response));
 });
 
-// const Database = require('../../database');
-// const MySQL = Database.MySQL;
-
-// const Message = require('../utils/message');
-// const User = require('../utils/user');
-// const Shop = require('../utils/shop');
-
-// const ERROR_HANDLER = function (response) {
-//     return function (code) {
-//         if (!Message[code]) {
-//             console.error(code);
-//             code = 199;
-//         }
-
-//         response.jsonp({
-//             code: code,
-//             message: Message[code],
-//             data: null,
-//         });
-//     };
-// }
-
-// const CHECK_USER = function (session) {
-//     return Promise.resolve()
-//         // 用户登录状态
-//         .then(() => {
-//             var isLoggedIn = User.isLoggedIn(session);
-//             if (isLoggedIn) {
-//                 return Promise.resolve();
-//             } else {
-//                 return Promise.reject(102);
-//             }
-//         })
-//         // 获取用户信息
-//         .then(() => {
-//             return User.getUser(session);
-//         });
-// };
-
-// //////////
-// // SHOP //
-// //////////
-
-// /**
-//  * 新建商店
-//  * /interface/shop/add?name=测试商店
-//  */
-// Router.all('/shop/add', (request, response) => {
-
-//     var name = request.body.name || request.query.name;
-
-//     var user, sid;
-//     CHECK_USER(request.cookies.ss_session)
-//         .then((data) => {
-//             user = data;
-//         })
-//         // 校验参数
-//         .then(() => {
-//             sid -= 0;
-//             if (!sid || isNaN(sid)) {
-//                 return Promise.reject(401);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 检查是否超出用户允许新建的商店数量
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .select('sid')
-//                 .from('SHOP')
-//                 .where(`uid=${user.uid}`);
-            
-//             return MySQL.execute(command.toString());
-//         })
-//         // 检查是否超出用户允许新建的商店数量
-//         .then((list) => {
-//             if (list.length >= 3) {
-//                 return Promise.reject(304);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 注册新商店
-//         .then(() => {
-//             if (name.length <= 2 || name.length >= 10) {
-//                 return Promise.reject(302);
-//             }
-//             return Shop.register({
-//                 name: name,
-//                 uid: user.uid,
-//             });
-//         })
-//         .then((data) => {
-//             sid = data.insertId;
-//         })
-//         // 插入商店用户关联信息
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .insert('USER_SHOP_MAP')
-//                 .add('sid', sid)
-//                 .add('uid', user.uid)
-//                 .add('create_time', Math.floor((new Date() - 0) / 1000));
-
-//             return MySQL.execute(command.toString());
-//         })
-//         // 查询插入的信息
-//         .then(() => {
-//             return Shop.get(sid);
-//         })
-//         // 返回成功信息
-//         .then((data) => {
-//             response.jsonp({
-//                 code: 400,
-//                 message: Message[400],
-//                 data: data,
-//             });
-//         })
-//         // 错误处理
-//         .catch(ERROR_HANDLER(response));
-// });
+Router.all('/shop/item', (request, response) => {
+    Promise.resolve({
+        user: null,
+        shop: null,
+        admins: null,
+    })
+    .then(User.isLoggedIn(request))
+    .then(Shop.isAdmin(request))
+    .then(Shop.queryItem(request))
+    .then(Shop.queryAdminList(request))
+    .then(Utils.successJson(response, (data) => {
+        return {
+            sid: data.shop.sid,
+            name: data.shop.name,
+            founder: data.shop.uid,
+            admins: data.admins,
+        };
+    }))
+    .catch(Utils.errorJson(response));
+});
 
 // /**
 //  * 查询用户可以访问的商店列表
@@ -184,93 +97,6 @@ Router.all('/shop/add', (request, response) => {
 //                     page: page,
 //                     list: data,
 //                 },
-//             });
-//         })
-//         .catch(ERROR_HANDLER(response));
-// });
-
-// /**
-//  * 显示商店详情
-//  * /interface/shop/item?sid=1
-//  */
-// Router.all('/shop/item', (request, response) => {
-//     var responseData = {
-//         owner: null,
-//         admin: [],
-//         name: [],
-//     };
-
-//     var sid = request.body.sid || request.query.sid;
-//     var user;
-    
-//     CHECK_USER(request.cookies.ss_session)
-//         .then((data) => {
-//             user = data;
-//         })
-//         .then(() => {
-//             sid -= 0;
-//             if (!sid || isNaN(sid)) {
-//                 return Promise.reject(401);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 检查是否允许当前用户访问该 sid 商店
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .select('*')
-//                 .from('USER_SHOP_MAP')
-//                 .where(`sid=${sid}`)
-//                 .where(`uid=${user.uid}`);
-//             return MySQL.execute(command.toString());
-//         })
-//         .then((list) => {
-//             if (!list || list.length <= 0) {
-//                 return Promise.reject(412);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 根据 sid 查询商店信息
-//         .then((list) => {
-//             var command = MySQL.sugar()
-//                 .select('*')
-//                 .from('SHOP')
-//                 .where(`sid=${sid}`);
-
-//             return MySQL.execute(command.toString());
-//         })
-//         .then((list) => {
-//             if (!list || !list[0]) {
-//                 return Promise.reject(410);
-//             }
-//             responseData.name = list[0].name;
-//             responseData.owner = list[0].uid;
-//             return Promise.resolve();
-//         })
-//         // 根据商店 sid 查询管理员
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .select('*')
-//                 .from('USER_SHOP_MAP')
-//                 .where(`sid=${sid}`);
-//             return MySQL.execute(command.toString());
-//         })
-//         .then((list) => {
-//             return Promise.all(list.map((item) => {
-//                 var command = MySQL.sugar()
-//                     .select('*')
-//                     .from('USER')
-//                     .where(`uid=${item.uid}`);
-//                 return MySQL.execute(command.toString());
-//             }));
-//         })
-//         .then((list) => {
-//             list = list.forEach((item) => {
-//                 responseData.admin.push(item[0]);
-//             });
-//             response.jsonp({
-//                 code: 400,
-//                 message: Message[400],
-//                 data: responseData,
 //             });
 //         })
 //         .catch(ERROR_HANDLER(response));
