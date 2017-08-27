@@ -127,6 +127,11 @@ var attachShopMap = function (request) {
     };
 };
 
+exports.userLimit = userLimit;
+exports.duplicationName = duplicationName;
+exports.insert = insert;
+exports.attachShopMap = attachShopMap;
+
 //----------
 // 查询商店
 //----------
@@ -216,11 +221,94 @@ var queryAdminList = function (request) {
     };
 };
 
-exports.userLimit = userLimit;
-exports.duplicationName = duplicationName;
-exports.insert = insert;
-exports.attachShopMap = attachShopMap;
-
 exports.isAdmin = isAdmin;
 exports.queryItem = queryItem;
 exports.queryAdminList = queryAdminList;
+
+//----------
+// 查询列表
+//----------
+
+var pageNum = 10;
+
+/**
+ * 根据页码查询商店列表
+ * @param {*} request 
+ */
+var queryUserShopSidList = function (request) {
+    return function (data) {
+        var command = MySQL.sugar()
+            .select('sid')
+            .from('USER_SHOP_MAP')
+            .where(`uid=${data.user.uid}`)
+            .toString();
+
+        var finish = function (list) {
+            data.sids = list.map((item) => {
+                return item.sid;
+            });
+            return Promise.resolve(data);
+        };
+        
+        return MySQL.execute(command).then(finish);
+    };
+};
+
+/**
+ * 传入一个 sids 列表，查询每个商店的具体信息
+ * @param {*} request 
+ */
+var queryShopFromSids = function (request) {
+    return function (data) {
+        var tasks = data.sids.map((sid) => {
+            var command = MySQL.sugar()
+                .select('*')
+                .from('SHOP')
+                .where(`sid=${sid}`)
+                .toString();
+
+            return MySQL.execute(command);
+        });
+
+        var finish = function (list) {
+            data.shops = list.map((item) => {
+                return item[0];
+            });
+            return Promise.resolve(data);
+        };
+
+        return Promise.all(tasks).then(finish);
+    };
+};
+
+exports.queryUserShopSidList = queryUserShopSidList;
+exports.queryShopFromSids = queryShopFromSids;
+
+//----------
+// 查询列表
+//----------
+
+/**
+ * 插入管理员
+ * @param {*} request 
+ */
+var insertAdmin = function (request) {
+    var uid = request.body.uid || request.query.uid;
+    var sid = request.body.sid || request.query.sid;
+    return function (data) {
+        var command = MySQL.sugar()
+            .insert('USER_SHOP_MAP')
+            .add('sid', sid)
+            .add('uid', uid)
+            .add('create_time', Math.floor((new Date() - 0) / 1000))
+            .toString();
+
+        var finish = function () {
+            return Promise.resolve(data);
+        };
+
+        return MySQL.execute(command).then(finish);
+    };
+};
+
+exports.insertAdmin = insertAdmin;

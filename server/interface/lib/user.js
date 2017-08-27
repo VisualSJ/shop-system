@@ -24,4 +24,8 @@ var isLoggedIn = function (request) {
     };
 };
 
+var exists = function () {
+    
+};
+
 exports.isLoggedIn = isLoggedIn;

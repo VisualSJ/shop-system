@@ -47,202 +47,37 @@ Router.all('/shop/item', (request, response) => {
     .catch(Utils.errorJson(response));
 });
 
-// /**
-//  * 查询用户可以访问的商店列表
-//  * /interface/shop/list
-//  */
-// Router.all('/shop/list', (request, response) => {
-//     var num = 10; // 每页显示 10 个
-//     var page = request.query.page - 0; // 1+
-//     if (!page || isNaN(page)) {
-//         page = 1;
-//     }
-    
-//     var user;
-//     CHECK_USER(request.cookies.ss_session)
-//         .then((data) => {
-//             user = data;
-//         })
-//         // 查询与用户相关的商店 sid
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .select('sid')
-//                 .from('USER_SHOP_MAP')
-//                 .where(`uid=${user.uid}`)
-//                 .limit((page - 1) * num, num);
-            
-//             return MySQL.execute(command.toString());
-//         })
-//         // 根据 sid 查询商店信息
-//         .then((list) => {
-//             var tasks = list.map((item) => {
-//                 var command = MySQL.sugar()
-//                     .select('*')
-//                     .from('SHOP')
-//                     .where(`sid=${item.sid}`);
+Router.all('/shop/list', (request, response) => {
+    Promise.resolve({
+        user: null,
+        sids: null, // 显示的商店 sid 列表
+        shops: null,
+    })
+    .then(User.isLoggedIn(request))
+    .then(Shop.queryUserShopSidList(request))
+    .then(Shop.queryShopFromSids(request))
+    .then(Utils.successJson(response, (data) => {
+        return {
+            uid: data.user.uid,
+            shops: data.shops,
+        };
+    }))
+    .catch(Utils.errorJson(response));
 
-//                 return MySQL.execute(command.toString());
-//             });
-//             return Promise.all(tasks);
-//         })
-//         // 整理返回数据
-//         .then((list) => {
-//             var data = list.map((item) => {
-//                 return item[0];
-//             });
-//             response.jsonp({
-//                 code: 400,
-//                 message: Message[400],
-//                 data: {
-//                     page: page,
-//                     list: data,
-//                 },
-//             });
-//         })
-//         .catch(ERROR_HANDLER(response));
-// });
+});
 
-// /**
-//  * 添加管理员
-//  * /interface/shop/add-admin?sid=1&uid=2
-//  */
-// Router.all('/shop/add-admin', (request, response) => {
-//     var sid = request.query.sid;
-//     var uid = request.query.uid;
-
-//     var user;
-//     CHECK_USER(request.cookies.ss_session)
-//         .then((data) => {
-//             user = data;
-//         })
-//         // 检查参数
-//         .then(() => {
-//             sid -= 0;
-//             if (!sid || isNaN(sid)) {
-//                 return Promise.reject(401);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 根据 sid 查询商店信息
-//         .then((list) => {
-//             var command = MySQL.sugar()
-//                 .select('*')
-//                 .from('SHOP')
-//                 .where(`sid=${sid}`);
-
-//             return MySQL.execute(command.toString());
-//         })
-//         .then((list) => {
-//             if (!list || !list[0]) {
-//                 return Promise.reject(410);
-//             }
-//             var item = list[0];
-//             if (item.uid != user.uid) {
-//                 return Promise.reject(411);
-//             }
-//             if (item.uid == uid) {
-//                 return Promise.reject(413);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 检查是否已经是管理员
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .select('*')
-//                 .from('USER_SHOP_MAP')
-//                 .where(`uid=${uid}`)
-//                 .where(`sid=${sid}`);
-            
-//             return MySQL.execute(command.toString());
-//         })
-//         .then((list) => {
-//             if (list.length > 0) {
-//                 return Promise.reject(413);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 插入商店用户关联信息
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .insert('USER_SHOP_MAP')
-//                 .add('sid', sid)
-//                 .add('uid', uid)
-//                 .add('create_time', Math.floor((new Date() - 0) / 1000));
-
-//             return MySQL.execute(command.toString());
-//         })
-//         // 整理返回数据
-//         .then(() => {
-//             response.jsonp({
-//                 code: 400,
-//                 message: Message[400],
-//                 data: null,
-//             });
-//         })
-//         .catch(ERROR_HANDLER(response));
-// });
-
-// /**
-//  * 移除管理员
-//  * /interface/shop/remove-admin?sid=1&uid=2
-//  */
-// Router.all('/shop/remove-admin', (request, response) => {
-//     var sid = request.query.sid;
-//     var uid = request.query.uid;
-
-//     var user;
-//     CHECK_USER(request.cookies.ss_session)
-//         .then((data) => {
-//             user = data;
-//         })
-//         // 检查数据
-//         .then(() => {
-//             sid -= 0;
-//             if (!sid || isNaN(sid)) {
-//                 return Promise.reject(401);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 根据 sid 查询商店信息
-//         .then((list) => {
-//             var command = MySQL.sugar()
-//                 .select('*')
-//                 .from('SHOP')
-//                 .where(`sid=${sid}`);
-
-//             return MySQL.execute(command.toString());
-//         })
-//         .then((list) => {
-//             if (!list || !list[0]) {
-//                 return Promise.reject(410);
-//             }
-//             var item = list[0];
-//             if (item.uid != user.uid) {
-//                 return Promise.reject(411);
-//             }
-//             if (item.uid == uid) {
-//                 return Promise.reject(414);
-//             }
-//             return Promise.resolve();
-//         })
-//         // 删除商店用户关联信息
-//         .then(() => {
-//             var command = MySQL.sugar()
-//                 .delete('USER_SHOP_MAP')
-//                 .where(`sid=${sid}`)
-//                 .where(`uid=${uid}`);
-//             return MySQL.execute(command.toString());
-//         })
-//         // 整理返回数据
-//         .then(() => {
-//             response.jsonp({
-//                 code: 400,
-//                 message: Message[400],
-//                 data: null,
-//             });
-//         })
-//         .catch(ERROR_HANDLER(response));
-// });
+Router.all('/shop/add-admin', (request, response) => {
+    Promise.resolve({
+        user: null,
+    })
+    .then(User.isLoggedIn(request))
+    .then(Shop.isAdmin(request))
+    .then(Shop.insertAdmin(request))
+    .then(Utils.successJson(response, (data) => {
+        return null;
+    }))
+    .catch(Utils.errorJson(response));
+});
 
 // ///////////////
 // // WAREHOUSE //
