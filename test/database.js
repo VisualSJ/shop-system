@@ -2,13 +2,20 @@
 
 const Chai = require('chai');
 
+const Database = require('../database');
 const MySQL = require('../database/mysql');
 
 describe('Database', () => {
 
-    describe('mysql', () => {
+    it('connect', (done) => {
+        Database.start()
+            .then(done)
+            .catch(done);
+    });
 
-        it('sugar -> select', () => {
+    describe('mysql.sugar', () => {
+
+        it('select', () => {
             Chai.expect(
                 MySQL.sugar()
                     .select('*')
@@ -17,7 +24,7 @@ describe('Database', () => {
                     .where('b=b')
                     .toString()
             ).to.be.equal(
-                `SELECT * FROM User WHERE a=a AND b=b;`
+                'SELECT * FROM `User` WHERE a=a AND b=b;'
             );
 
             Chai.expect(
@@ -28,11 +35,11 @@ describe('Database', () => {
                     .where('b=b')
                     .toString()
             ).to.be.equal(
-                `SELECT * FROM User WHERE a=a AND b=b;`
+                'SELECT * FROM `User` WHERE a=a AND b=b;'
             );
         });
 
-        it('sugar -> create', () => {
+        it('create', () => {
             Chai.expect(
                 MySQL.sugar()
                     .create('User')
@@ -40,11 +47,11 @@ describe('Database', () => {
                     .add('b', 'INT(11)')
                     .toString()
             ).to.be.equal(
-                `CREATE TABLE User (a INT(11), b INT(11));`
+                'CREATE TABLE `User` (a INT(11), b INT(11));'
             );
         });
 
-        it('sugar -> insert', () => {
+        it('insert', () => {
             Chai.expect(
                 MySQL.sugar()
                     .insert('User')
@@ -52,11 +59,11 @@ describe('Database', () => {
                     .add('col2', 'col1*2')
                     .toString()
             ).to.be.equal(
-                `INSERT INTO User (col1, col2) VALUES (15, col1*2);`
+                'INSERT INTO `User` (col1, col2) VALUES (15, col1*2);'
             );
         });
 
-        it('sugar -> delete', () => {
+        it('delete', () => {
             Chai.expect(
                 MySQL.sugar()
                     .delete('User')
@@ -64,11 +71,11 @@ describe('Database', () => {
                     .where('name=a')
                     .toString()
             ).to.be.equal(
-                `DELETE FROM User WHERE id=1 AND name=a;`
+                'DELETE FROM `User` WHERE id=1 AND name=a;'
             )
         });
 
-        it('sugar -> update', () => {
+        it('update', () => {
             Chai.expect(
                 MySQL.sugar()
                     .update('User')
@@ -78,9 +85,13 @@ describe('Database', () => {
                     .where('b=2')
                     .toString()
             ).to.be.equal(
-                `UPDATE User SET a=a, b=b WHERE a=1 AND b=2;`
+                'UPDATE `User` SET a=a, b=b WHERE a=1 AND b=2;'
             );
         });
+    });
+
+    describe('user', () => {
+
     });
 
 });

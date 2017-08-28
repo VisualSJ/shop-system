@@ -1,15 +1,25 @@
 'use strict';
 
-exports.MySQL = require('./mysql');
+var mysql = require('./mysql');
 
-exports.MySQL.connect({
-    host: '127.0.0.1',
-    user: 'root',
-    password: '',
-    database: 'user'
-}).then(() => {
-    console.log('MySQL connect success!');
-}).catch ((error) => {
-    console.log('MySQL connect failure!');
-    console.error(error);
-});
+var connectMySQL = function () {
+    return new Promise((resolve, reject) => {
+        mysql.connect({
+            host: '127.0.0.1',
+            user: 'root',
+            password: '',
+            database: 'user'
+        }).then(() => {
+            resolve();
+        }).catch ((error) => {
+            reject(error);
+        });
+    });
+};
+
+exports.start = function () {
+    return Promise.resolve()
+        .then(connectMySQL);
+};
+
+exports.user = require('./user');
