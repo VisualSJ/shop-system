@@ -1,9 +1,8 @@
 'use strict';
 
-const Database = require('../database');
-const MySQL = Database.MySQL;
+const mysql = require('../database/mysql');
 
-exports.USER =  MySQL.sugar().create('USER')
+exports.USER =  mysql.sugar().create('USER')
     // 唯一 ID
     .add('uid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 用户名
@@ -16,34 +15,28 @@ exports.USER =  MySQL.sugar().create('USER')
     .add('phone', 'VARCHAR(11)')
     // 头像地址
     .add('portrait', 'VARCHAR(40)')
-    // 是否通过验证 (0 未验证, 1 已验证, 2 验证失效)
-    .add('verify', 'INT(1)')
-    // 用户权限等级 (0 普通, 1-80 VIP, 90-99 管理员)
+    // 用户权限等级 (0 未验证, 1-80 普通会员, 90-99 管理员)
     .add('level', 'INT(2)')
+    // 用户管理的商店 id 列表
+    .add('shops', 'VARCHAR(100)')
     // 性别 (0未知，1男，2女)
     .add('sex', 'INT(1)', 'DEFAULT 0')
     // 创建的时间
     .add('create_time', 'INT(11)');
 
-exports.SHOP = MySQL.sugar().create('SHOP')
+exports.SHOP = mysql.sugar().create('SHOP')
     // 唯一 id
     .add('sid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 商店名字
     .add('name', 'VARCHAR(9)')
+    // 商店的管理员列表
+    .add('admins', 'VARCHAR(100)')
     // 哪个用户创建的
     .add('uid', 'INT(9)')
     // 创建的时间
     .add('create_time', 'INT(11)');
 
-exports.USER_SHOP_MAP = MySQL.sugar().create('USER_SHOP_MAP')
-    // 商店 sid (一个商店可以有多个用户管理)
-    .add('sid', 'INT(9)')
-    // 用户 uid (一个用户也可以管理多个商店)
-    .add('uid', 'INT(9)')
-    // 关联创建的时间
-    .add('create_time', 'INT(11)');
-
-exports.WAREHOUSE = MySQL.sugar().create('WAREHOUSE')
+exports.WAREHOUSE = mysql.sugar().create('WAREHOUSE')
     // 唯一 id
     .add('wid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 属于哪个商店
@@ -57,7 +50,7 @@ exports.WAREHOUSE = MySQL.sugar().create('WAREHOUSE')
     // 创建的时间
     .add('create_time', 'INT(11)');
 
-exports.MERCHANDISE = MySQL.sugar().create('MERCHANDISE')
+exports.MERCHANDISE = mysql.sugar().create('MERCHANDISE')
     // 唯一 id
     .add('mid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 属于哪个商店
@@ -75,7 +68,7 @@ exports.MERCHANDISE = MySQL.sugar().create('MERCHANDISE')
     // 创建的时间
     .add('create_time', 'INT(11)');
 
-exports.CUSTOMER = MySQL.sugar().create('CUSTOMER')
+exports.CUSTOMER = mysql.sugar().create('CUSTOMER')
     // 唯一 id
     .add('cid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 属于哪个商店
@@ -101,7 +94,7 @@ exports.CUSTOMER = MySQL.sugar().create('CUSTOMER')
     // 创建的时间
     .add('create_time', 'INT(11)');
 
-exports.ORDER = MySQL.sugar().create('ORDER')
+exports.ORDER = mysql.sugar().create('ORDER')
     // 唯一 id
     .add('oid', 'INT(9)', 'NOT NULL PRIMARY KEY auto_increment')
     // 属于哪个商店
@@ -111,7 +104,7 @@ exports.ORDER = MySQL.sugar().create('ORDER')
     // 建议零售价
     .add('suggested_retail_price', 'INT(7)')
     // 建议批发价
-    .add('suggested_wholesale_price')
+    .add('suggested_wholesale_price', 'INT(7)')
     // 订单实际总价
     .add('actual_price', 'INT(7)')
     // 备注(降价抹零送赠品等备注信息)

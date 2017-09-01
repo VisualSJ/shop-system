@@ -1,14 +1,16 @@
 'use strict';
 
-const Chai = require('chai');
+const chai = require('chai');
 
-const Database = require('../database');
-const MySQL = require('../database/mysql');
+const database = require('../database');
+const mysql = require('../database/mysql');
+
+const user = require('../lib/user');
 
 describe('Database', () => {
 
     it('connect', (done) => {
-        Database.start()
+        database.start()
             .then(done)
             .catch(done);
     });
@@ -16,8 +18,8 @@ describe('Database', () => {
     describe('mysql.sugar', () => {
 
         it('select', () => {
-            Chai.expect(
-                MySQL.sugar()
+            chai.expect(
+                mysql.sugar()
                     .select('*')
                     .from('User')
                     .where('a=a')
@@ -27,8 +29,8 @@ describe('Database', () => {
                 'SELECT * FROM `User` WHERE a=a AND b=b;'
             );
 
-            Chai.expect(
-                MySQL.sugar()
+            chai.expect(
+                mysql.sugar()
                     .select('*')
                     .from('User')
                     .where('a=a')
@@ -40,8 +42,8 @@ describe('Database', () => {
         });
 
         it('create', () => {
-            Chai.expect(
-                MySQL.sugar()
+            chai.expect(
+                mysql.sugar()
                     .create('User')
                     .add('a', 'INT(11)')
                     .add('b', 'INT(11)')
@@ -52,8 +54,8 @@ describe('Database', () => {
         });
 
         it('insert', () => {
-            Chai.expect(
-                MySQL.sugar()
+            chai.expect(
+                mysql.sugar()
                     .insert('User')
                     .add('col1' ,'15')
                     .add('col2', 'col1*2')
@@ -64,8 +66,8 @@ describe('Database', () => {
         });
 
         it('delete', () => {
-            Chai.expect(
-                MySQL.sugar()
+            chai.expect(
+                mysql.sugar()
                     .delete('User')
                     .where('id=1')
                     .where('name=a')
@@ -76,8 +78,8 @@ describe('Database', () => {
         });
 
         it('update', () => {
-            Chai.expect(
-                MySQL.sugar()
+            chai.expect(
+                mysql.sugar()
                     .update('User')
                     .set('a', 'a')
                     .set('b', 'b')
@@ -91,7 +93,27 @@ describe('Database', () => {
     });
 
     describe('user', () => {
-
+        var data = {};
+        
+        it('check name', (done) => {
+            user.insert(data).then(done).catch((error) => {
+                if (error === 510) {
+                    done();
+                }
+            });
+            data.name = '1233'
+            user.insert(data).then(done).catch((error) => {
+                if (error === 510) {
+                    done();
+                }
+            });
+            data.name = 'abcd('
+            user.insert(data).then(done).catch((error) => {
+                if (error === 510) {
+                    done();
+                }
+            });
+        });
     });
 
 });

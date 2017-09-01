@@ -1,17 +1,23 @@
 'use strict';
 
-const Path = require('path');
-const Express = require('express');
-const BodyParser  = require('body-parser');
-const CookieParser  = require('cookie-parser');
+const path = require('path');
+const express = require('express');
+const body  = require('body-parser');
+const cookie  = require('cookie-parser');
+const session = require('express-session');
 
-const App = Express();
+const app = Express();
 
-App.use(Express.static('./static'));
-App.use(BodyParser.urlencoded({ extended: false }));
-App.use(CookieParser());
+app.use(express.static('./static'));
+app.use(body.urlencoded({ extended: false }));
+app.use(cookie('hs_session'));
+app.use(session({
+    secret: 'hs_session',
+    resave: true,
+    saveUninitialized: true,
+}));
 
-// App.set('views', Path.join(__dirname, '../views'));
-App.set('view engine', 'jade');
+// App.set('views', path.join(__dirname, '../views'));
+app.set('view engine', 'jade');
 
-module.exports = App;
+module.exports = app;

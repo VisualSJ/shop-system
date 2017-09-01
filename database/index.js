@@ -21,5 +21,3 @@ exports.start = function () {
     return Promise.resolve()
         .then(connectMySQL);
 };
-
-exports.user = require('./user');

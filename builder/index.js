@@ -1,18 +1,18 @@
 'use strict';
 
-const Define = require('./define');
-const Database = require('../database');
-const MySQL = Database.MySQL;
+const define = require('./define');
+const database = require('../database');
+const mysql = require('../database/mysql');
 
 var createTable = function (name) {
-    var command = Define[name];
+    var command = define[name];
     return function () {
         return new Promise((resolve, reject) => {
             console.log(`开始创建 ${name} 表`);
-            MySQL.execute(`SHOW TABLES LIKE '${name}';`)
+            mysql.execute(`SHOW TABLES LIKE '${name}';`)
                 .then((results) => {
                     if (results.length <= 0) {
-                        MySQL.execute(command.toString())
+                        mysql.execute(command.toString())
                             .then(resolve)
                             .catch(reject);
                     } else {
@@ -26,31 +26,23 @@ var createTable = function (name) {
 };
 
 exports.start = function () {
-    new Promise((resolve, reject) => {
-        console.log('连接数据库');
-        if (MySQL.isConnect) {
-            return resolve();
-        }
-        MySQL.once('connect', (error) => {
-            if (error) {
-                return rejcet(error);
-            }
-            resolve();
+    console.log('连接数据库');
+    database.start()
+        .then(() => {
+            console.log('连接成功');
+        })
+        .then(createTable('USER'))
+        .then(createTable('SHOP'))
+        .then(createTable('WAREHOUSE'))
+        .then(createTable('MERCHANDISE'))
+        .then(createTable('CUSTOMER'))
+        .then(createTable('ORDER'))
+        .then(() => {
+            console.log('构建项目数据库成功');
+            process.exit(0);
+        }).catch((error) => {
+            console.log('构建项目数据库失败');
+            console.error(error);
+            process.exit(0);
         });
-    })
-    .then(createTable('USER'))
-    .then(createTable('SHOP'))
-    .then(createTable('USER_SHOP_MAP'))
-    .then(createTable('WAREHOUSE'))
-    .then(createTable('MERCHANDISE'))
-    .then(createTable('CUSTOMER'))
-    .then(createTable('ORDER'))
-    .then(() => {
-        console.log('构建项目数据库成功');
-        process.exit(0);
-    }).catch((error) => {
-        console.log('构建项目数据库失败');
-        console.error(error);
-        process.exit(0);
-    });
 };
