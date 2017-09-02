@@ -68,6 +68,9 @@ class Insert {
     }
 
     add (name, value) {
+        if (typeof value === 'string') {
+            value = `'${value}'`;
+        }
         this._add.push({
             name: name,
             value: value,
@@ -80,7 +83,9 @@ class Insert {
             return item.name;
         });
         var values = this._add.map((item) => {
-            return item.value;
+            var value = item.value;
+            var type = typeof value;
+            return value;
         });
         return `INSERT INTO \`${this._table}\` (${names.join(', ')}) VALUES (${values.join(', ')});`;
     }
@@ -113,6 +118,9 @@ class Update {
     }
 
     set (name, value) {
+        if (typeof value === 'string') {
+            value = `'${value}'`;
+        }
         this._set.push(`${name}=${value}`);
         return this;
     }
@@ -126,6 +134,24 @@ class Update {
         return `UPDATE \`${this._table}\` SET ${this._set.join(', ')} WHERE ${this._where.join(' AND ')};`;
     }
 
+}
+
+class Count {
+
+    constructor (table) {
+        this._table = table;
+    }
+
+    keys (key, value) {
+        if (typeof value === 'string') {
+            value = `'${value}'`;
+        }
+        this._keys.push(`${key}=${value}`);
+    }
+
+    toString () {
+        return `SELECT COUNT(*) as count FROM \`${this._table}\` WHERE ${this._keys.join('AND')}`;
+    }
 }
 
 class Sugar {
