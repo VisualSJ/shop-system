@@ -105,4 +105,24 @@ describe('lib.user', () => {
             done(error);
         });
     });
+
+    it('Update the user', () => {
+        user.update(1, {
+            name: 'test2',
+        }).then(() => {
+            user.query({
+                name: 'test'
+            }).then((user) => {
+                if (user.name !== 'test') {
+                    done('Update error');
+                } else {
+                    done();
+                }
+            }).catch((error) => {
+                done(error);
+            });
+        }).catch((error) => {
+            done(error);
+        });
+    });
 });
