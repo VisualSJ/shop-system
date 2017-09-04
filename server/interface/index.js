@@ -1,10 +1,12 @@
 'use strict';
 
-const Express = require('express');
-const Router = Express();
+const express = require('express');
+const router = express();
 
-const User = require('./lib/user');
-const Shop = require('./lib/shop');
-const Utils = require('./lib/utils');
+const user = require('./lib/user');
+const shop = require('./lib/shop');
+const utils = require('./lib/utils');
 
-module.exports = Router;
+router.use('/user', user);
+
+module.exports = router;

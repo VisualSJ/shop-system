@@ -1,12 +1,31 @@
 'use strict';
 
-const express = require('./express');
+const path = require('path');
+const express = require('express');
+const body  = require('body-parser');
+const cookie  = require('cookie-parser');
+const session = require('express-session');
 
-const interface = require('./interface');
-const controller = require('./controller');
+const app = express();
+
+app.use(express.static('./static'));
+app.use(body.urlencoded({ extended: false }));
+app.use(cookie('hs_session'));
+app.use(session({
+    secret: 'hs_session',
+    resave: true,
+    saveUninitialized: true,
+}));
+
+app.set('views', path.join(__dirname, '../views'));
+app.set('view engine', 'jade');
 
 // 加载控制器
-express.use('/interface', interface);
-express.use('/', controller);
+app.use('/interface', require('./interface'));
+app.use('/', require('./controller'));
 
-module.exports = express;
+app.all('*', (request, response) => {
+    response.end('404');
+});
+
+module.exports = app;

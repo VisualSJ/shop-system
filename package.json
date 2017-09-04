@@ -20,19 +20,12 @@
   },
   "homepage": "https://github.com/VisualSJ/shop-system#readme",
   "dependencies": {
-    "body-parser": "^1.17.2",
-    "chai": "^4.1.0",
+    "body-parser": "^1.18.1",
     "cookie-parser": "^1.4.3",
-    "express": "^4.15.3",
+    "express": "^4.15.4",
     "express-session": "^1.15.5",
     "jade": "^1.11.0",
-    "mysql": "^2.14.1",
-    "should": "^11.2.1"
-  },
-  "devDependencies": {
-    "gaze": "^1.1.2",
-    "gulp": "^3.9.1",
-    "gulp-less": "^3.3.2",
-    "gulp-minify-css": "^1.2.4"
+    "shop-system-code": "file:../shop-system-code",
+    "shop-system-sql": "file:../shop-system-sql"
   }
 }

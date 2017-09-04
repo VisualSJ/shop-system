@@ -1,28 +1,27 @@
 'use start';
 
-const Message = require('../../utils/message');
+const code = require('../../../lib/code');
 
-var successJson = function (response, handler) {
+var success = function (response, handler) {
     return function (data) {
-        console.log('success')
         response.jsonp({
             code: 100,
-            message: Message[100],
+            message: code[100],
             data: handler(data),
         });
     };
 };
 
-var errorJson = function (response) {
-    return function (code) {
-        if (!Message[code]) {
-            console.error(code);
-            code = 199;
+var failed = function (response) {
+    return function (num) {
+        if (!code[num]) {
+            console.log(num);
+            num = 199;
         }
 
         response.jsonp({
-            code: code,
-            message: Message[code],
+            code: num,
+            message: code[num],
             data: null,
         });
     };
@@ -32,6 +31,6 @@ var currentTime = function () {
     return (new Date() - 0) / 1000;
 }
 
-exports.successJson = successJson;
-exports.errorJson = errorJson;
+exports.success = success;
+exports.failed = failed;
 exports.currentTime = currentTime;

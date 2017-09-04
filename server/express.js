@@ -6,7 +6,7 @@ const body  = require('body-parser');
 const cookie  = require('cookie-parser');
 const session = require('express-session');
 
-const app = Express();
+const app = express();
 
 app.use(express.static('./static'));
 app.use(body.urlencoded({ extended: false }));
@@ -17,7 +17,7 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-// App.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'jade');
 
 module.exports = app;
