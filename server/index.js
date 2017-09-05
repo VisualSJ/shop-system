@@ -21,7 +21,6 @@ app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'jade');
 
 // 加载控制器
-app.use('/interface', require('./interface'));
 app.use('/', require('./controller'));
 
 app.all('*', (request, response) => {
